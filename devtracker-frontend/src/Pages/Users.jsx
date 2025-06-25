@@ -1,26 +1,41 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 
 const UserTable = () => {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name");
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: "Ali Raza",
-      email: "ali.raza@example.com",
-      jobTitle: "Frontend Developer",
-      status: "active",
-      avatar: { url: "https://i.pravatar.cc/150?img=3" },
-    },
-    {
-      id: 2,
-      name: "Fatima Khan",
-      email: "fatima.khan@example.com",
-      jobTitle: "Backend Engineer",
-      status: "inactive",
-      avatar: { url: "" },
-    },
-  ]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  // 1. Fetch real users on mount
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken"); // or wherever you keep it
+    fetch("http://localhost:5000/api/v1/admin/allusers", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          // handle 401 specifically
+          if (res.status === 401) {
+            throw new Error("Unauthorized – please log in again.");
+          }
+          throw new Error(`Server responded ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setUsers(data.users || []);
+      })
+      .catch((err) => {
+        console.error("Load users failed:", err);
+        setError(err.message);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleSearch = (e) => {
     setSearch(e.target.value.toLowerCase());
@@ -92,7 +107,7 @@ const UserTable = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Job Title</th>
-              <th>Status</th>
+              <th>Roles</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -108,7 +123,11 @@ const UserTable = () => {
                 <tr key={user.id}>
                   <td>
                     <img
-                      src={user.avatar?.url || "https://via.placeholder.com/40"}
+                      src={
+                        user.avatar.url && user.avatar.url.trim() !== ""
+                          ? user.avatar.url
+                          : "/images/default/default_avatar.jpg"
+                      }
                       alt={user.name}
                       className="rounded-circle"
                       width="40"
@@ -120,9 +139,15 @@ const UserTable = () => {
                   <td>{user.jobTitle || "—"}</td>
                   <td>
                     <span
-                      className={`badge ${user.status === "active" ? "bg-success justify-content-center align-item-center" : "bg-danger justify-content-center align-item-center"}`}
+                      className={`badge ${
+                        user.role === "admin"
+                          ? "bg-success"
+                          : user.role === "user"
+                            ? "bg-primary"
+                            : "bg-secondary"
+                      } d-flex justify-content-center align-items-center`}
                     >
-                      {user.status || "unknown"}
+                      {user.role || "unknown"}
                     </span>
                   </td>
                   <td>

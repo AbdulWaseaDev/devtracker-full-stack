@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getAllUsers,
+  getAllUsersAdmin,
   getUserProfile,
   loginUser,
   logoutUser,
@@ -25,5 +26,8 @@ router.route("/password/update").put(isAuthenticatedUser, updatePassword);
 router.route("/profile/update").put(isAuthenticatedUser, updateProfile);
 
 router.route("/users/portfolio").get(getAllUsers);
+
+//Admin
+router.route("/admin/allusers").get(getAllUsersAdmin);
 
 export default router;

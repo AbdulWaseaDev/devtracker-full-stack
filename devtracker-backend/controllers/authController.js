@@ -141,3 +141,16 @@ export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
     users,
   });
 });
+export const getAllUsersAdmin = catchAsyncErrors(async (req, res, next) => {
+  const users = await User.find()
+    .select("-createdAt")
+    .select("-updatedAt")
+    .select("-__v");
+
+  if (!users) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+  res.status(200).json({
+    users,
+  });
+});
