@@ -1,0 +1,119 @@
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0 0 auto;
+  background-color: #1f2937;
+  color: #ffffff;
+  padding: 15px 25px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  /* ✅ Ensure items stay in one row */
+  flex-wrap: nowrap;
+
+  /* ✅ Keep everything aligned to the left */
+  justify-content: flex-start;
+
+  /* ✅ Optional: force the logo to never wrap */
+  white-space: nowrap;
+}
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  /* ✅ Ensure items stay in one row */
+  flex-wrap: nowrap;
+
+  /* ✅ Keep everything aligned to the left */
+  justify-content: flex-start;
+
+  /* ✅ Optional: force the logo to never wrap */
+  white-space: nowrap;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  max-width: 200px;
+  width: 100%;
+}
+
+.nav-link {
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link:hover {
+  background-color: #374151;
+  color: #fbbf24;
+}
+
+.icon {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+}
+
+.username {
+  font-weight: 500;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 10;
+  min-width: 150px;
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.dropdown-icon {
+  font-size: 16px;
+}

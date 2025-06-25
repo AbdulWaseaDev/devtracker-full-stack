@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const Blog = () => {
   const { user: alias } = useParams(); // alias = 'zeeshan', 'nadeem', or 'anus'
@@ -43,7 +43,6 @@ const Blog = () => {
       </h1>
       {posts.map((post) => {
         const isDefault = !post.cover_image;
-        const username = post.source; // real Dev.to username from API
         return (
           <div key={post.id} style={styles.card}>
             <img
@@ -54,18 +53,11 @@ const Blog = () => {
                 objectFit: isDefault ? "contain" : "cover",
               }}
             />
-            <Link
-              to={`/blog/${username}/${post.slug}`}
-              style={{
-                ...styles.title,
-                textDecoration: "none",
-                color: "inherit",
-              }}
-            >
-              <h2>{post.title}</h2>
-            </Link>
+            <a href={post.url} target="_blank" rel="noopener noreferrer">
+              <h2 style={styles.title}>{post.title}</h2>
+            </a>
             <p style={styles.meta}>
-              by <strong>{username}</strong> on{" "}
+              by <strong>{post.source}</strong> on{" "}
               {new Date(post.published_at).toLocaleDateString()}
             </p>
             <p style={styles.content}>{post.description}</p>
@@ -103,7 +95,7 @@ const styles = {
     borderRadius: "10px",
     marginBottom: "12px",
   },
-  title: { fontSize: "22px", marginBottom: "8px" },
+  title: { fontSize: "22px", marginBottom: "8px", textDecoration: "none" },
   meta: { fontSize: "14px", color: "#6b7280", marginBottom: "12px" },
   content: { fontSize: "16px", color: "#374151" },
 };
