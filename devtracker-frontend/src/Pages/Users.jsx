@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const UserTable = () => {
   const [search, setSearch] = useState("");
@@ -6,34 +7,32 @@ const UserTable = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
     fetch("http://localhost:5000/api/v1/admin/allusers", {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      credentials: "include", // send the HTTP-only cookie
+      headers: { "Content-Type": "application/json" },
     })
       .then((res) => {
-        if (!res.ok) {
-          if (res.status === 401) {
-            throw new Error("Unauthorized – please log in again.");
-          }
-          throw new Error(`Server responded ${res.status}`);
+        if (res.status === 401) {
+          // Unauthorized or cookie expired
+          navigate("/dashboard/login");
+          throw new Error("Redirecting to login...");
         }
+        if (!res.ok) throw new Error(`Server responded ${res.status}`);
         return res.json();
       })
-      .then((data) => {
-        setUsers(data.users || []);
-      })
+      .then((data) => setUsers(data.users || []))
       .catch((err) => {
-        console.error("Load users failed:", err);
-        setError(err.message);
+        if (err.message !== "Redirecting to login...") {
+          console.error("Load users failed:", err);
+          setError(err.message);
+        }
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [navigate]);
 
   const handleSearch = (e) => setSearch(e.target.value.toLowerCase());
   const handleSort = (field) => setSortBy(field);

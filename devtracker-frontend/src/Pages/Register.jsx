@@ -199,15 +199,6 @@ function FormExample() {
               Submit Form
             </Button>
           </Form>
-
-          {submittedData && (
-            <div className="container mt-4">
-              <h5 className="mb-3">📄 Submitted Data</h5>
-              <pre className="bg-light p-3 border rounded">
-                {JSON.stringify(submittedData, null, 2)}
-              </pre>
-            </div>
-          )}
         </>
       )}
     </Formik>

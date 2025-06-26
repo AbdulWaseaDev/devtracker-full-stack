@@ -141,6 +141,7 @@ export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
     users,
   });
 });
+//admin all users
 export const getAllUsersAdmin = catchAsyncErrors(async (req, res, next) => {
   const users = await User.find()
     .select("-createdAt")

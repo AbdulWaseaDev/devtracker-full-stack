@@ -31,7 +31,7 @@ function OffcanvasExample() {
                   <Nav.Link href="/dashboard/user/register">
                     Register Users
                   </Nav.Link>
-                  <Nav.Link href="/dashboard/login">Login Form</Nav.Link>
+                  <Nav.Link href="/dashboard/login">Login </Nav.Link>
                   <Nav.Link href="/dashboard/logout">Logout</Nav.Link>
                 </Nav>
               </Offcanvas.Body>
