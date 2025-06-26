@@ -28,6 +28,8 @@ router.route("/profile/update").put(isAuthenticatedUser, updateProfile);
 router.route("/users/portfolio").get(getAllUsers);
 
 //Admin
-router.route("/admin/allusers").get(getAllUsersAdmin);
+router
+  .route("/admin/allusers")
+  .get(isAuthenticatedUser, authorizedRoles("admin"), getAllUsersAdmin);
 
 export default router;

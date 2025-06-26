@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const UserTable = () => {
   const [search, setSearch] = useState("");
@@ -7,9 +6,9 @@ const UserTable = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // 1. Fetch real users on mount
+
   useEffect(() => {
-    const token = localStorage.getItem("jwtToken"); // or wherever you keep it
+    const token = localStorage.getItem("jwtToken");
     fetch("http://localhost:5000/api/v1/admin/allusers", {
       method: "GET",
       headers: {
@@ -19,7 +18,6 @@ const UserTable = () => {
     })
       .then((res) => {
         if (!res.ok) {
-          // handle 401 specifically
           if (res.status === 401) {
             throw new Error("Unauthorized – please log in again.");
           }
@@ -37,33 +35,35 @@ const UserTable = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleSearch = (e) => {
-    setSearch(e.target.value.toLowerCase());
-  };
-
-  const handleSort = (field) => {
-    setSortBy(field);
-  };
-
-  const handleDelete = (id) => {
-    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-  };
-
-  const handleEdit = (id) => {
-    alert(`Edit user with ID: ${id}`);
-  };
-
-  const handleUpdate = (id) => {
-    alert(`Update user with ID: ${id}`);
-  };
+  const handleSearch = (e) => setSearch(e.target.value.toLowerCase());
+  const handleSort = (field) => setSortBy(field);
+  const handleDelete = (id) =>
+    setUsers((prev) => prev.filter((u) => u._id !== id));
+  const handleEdit = (id) => alert(`Edit user with ID: ${id}`);
+  const handleUpdate = (id) => alert(`Update user with ID: ${id}`);
 
   const filteredUsers = users
-    .filter(
-      (user) =>
-        user.name.toLowerCase().includes(search) ||
-        user.email.toLowerCase().includes(search),
+    .filter((user) =>
+      [user.name, user.email]
+        .map((s) => (s || "").toLowerCase())
+        .some((txt) => txt.includes(search)),
     )
-    .sort((a, b) => a[sortBy]?.localeCompare(b[sortBy]));
+    .sort((a, b) => {
+      const A = (a[sortBy] || "").toString().toLowerCase();
+      const B = (b[sortBy] || "").toString().toLowerCase();
+      return A.localeCompare(B);
+    });
+
+  if (loading)
+    return (
+      <div className="text-center my-5">
+        <span className="spinner-border"></span> Loading users…
+      </div>
+    );
+  if (error)
+    return (
+      <div className="alert alert-danger text-center my-5">Error: {error}</div>
+    );
 
   return (
     <div className="container mt-4">
@@ -78,24 +78,15 @@ const UserTable = () => {
           />
         </div>
         <div className="col-md-6 text-md-end">
-          <button
-            className="btn btn-sm btn-primary me-2"
-            onClick={() => handleSort("name")}
-          >
-            Sort by Name
-          </button>
-          <button
-            className="btn btn-sm btn-primary me-2"
-            onClick={() => handleSort("email")}
-          >
-            Sort by Email
-          </button>
-          <button
-            className="btn btn-sm btn-primary"
-            onClick={() => handleSort("jobTitle")}
-          >
-            Sort by Job
-          </button>
+          {["name", "email", "jobTitle"].map((field) => (
+            <button
+              key={field}
+              className="btn btn-sm btn-primary me-2"
+              onClick={() => handleSort(field)}
+            >
+              Sort by {field.charAt(0).toUpperCase() + field.slice(1)}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -107,7 +98,7 @@ const UserTable = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Job Title</th>
-              <th>Roles</th>
+              <th>Role</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -120,11 +111,11 @@ const UserTable = () => {
               </tr>
             ) : (
               filteredUsers.map((user) => (
-                <tr key={user.id}>
+                <tr key={user._id}>
                   <td>
                     <img
                       src={
-                        user.avatar.url && user.avatar.url.trim() !== ""
+                        user.avatar?.url?.trim()
                           ? user.avatar.url
                           : "/images/default/default_avatar.jpg"
                       }
@@ -132,6 +123,7 @@ const UserTable = () => {
                       className="rounded-circle"
                       width="40"
                       height="40"
+                      style={{ objectFit: "cover" }}
                     />
                   </td>
                   <td>{user.name}</td>
@@ -151,33 +143,26 @@ const UserTable = () => {
                     </span>
                   </td>
                   <td>
-                    <div
-                      className="gap-2 d-flex justify-content-center align-item-center"
-                      role="group"
-                    >
+                    <div className="d-flex gap-2 justify-content-center">
                       <button
-                        onClick={() => handleEdit(user.id)}
-                        className="btn btn-warning text-white"
+                        onClick={() => handleEdit(user._id)}
+                        className="btn btn-warning text-white btn-sm"
                       >
                         Edit
                       </button>
                       <button
-                        onClick={() => handleUpdate(user.id)}
-                        className="btn btn-info text-white"
+                        onClick={() => handleUpdate(user._id)}
+                        className="btn btn-info text-white btn-sm"
                       >
                         Update
                       </button>
                       <button
-                        onClick={() => {
-                          if (
-                            window.confirm(
-                              `Are you sure you want to delete ${user.name}?`,
-                            )
-                          ) {
-                            handleDelete(user.id);
-                          }
-                        }}
-                        className="btn btn-danger"
+                        onClick={() =>
+                          window.confirm(
+                            `Are you sure you want to delete ${user.name}?`,
+                          ) && handleDelete(user._id)
+                        }
+                        className="btn btn-danger btn-sm"
                       >
                         Delete
                       </button>
