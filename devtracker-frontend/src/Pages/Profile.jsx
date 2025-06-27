@@ -1,5 +1,5 @@
 // src/pages/Profile.jsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function Profile() {
   const [users, setUsers] = useState([]);

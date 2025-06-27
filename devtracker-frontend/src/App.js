@@ -18,7 +18,6 @@ import Navbar from "./Components/Navbar.jsx";
 import Dashboard from "./Pages/Dashboard.jsx";
 import Register from "./Pages/Register.jsx";
 import Users from "./Pages/Users.jsx";
-import ManageUserPage from "./Pages/ManageUserPage.jsx";
 import LoginForm from "./Components/LoginForm.jsx";
 
 const AppContent = () => {
@@ -42,7 +41,6 @@ const AppContent = () => {
         <Route path="/navbar" element={<Navbar />} />
         <Route path="/dashboard/user/register" element={<Register />} />
         <Route path="/dashboard/users" element={<Users />} />
-        <Route path="/dashboard/manageuserpage" element={<ManageUserPage />} />
         <Route path="/dashboard/login" element={<LoginForm />} />
       </Routes>
 

@@ -9,7 +9,6 @@ import * as yup from "yup";
 
 function FormExample() {
   const { Formik } = formik;
-  const [submittedData, setSubmittedData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const schema = yup.object().shape({
@@ -37,7 +36,6 @@ function FormExample() {
     <Formik
       validationSchema={schema}
       onSubmit={(values, { resetForm }) => {
-        setSubmittedData(values);
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 5000); // auto-hide
         resetForm();
