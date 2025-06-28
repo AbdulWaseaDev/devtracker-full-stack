@@ -1,67 +1,74 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        FRONTEND_DIR = 'frontend'
-        BACKEND_DIR = 'backend'
-        DEPLOY_DIR_FRONTEND = '/var/www/html'         // For React
-        DEPLOY_DIR_BACKEND = '/var/www/backend-app'   // For Node.js
+  // 1) react to GitHub webhooks
+  triggers {
+    githubPush()
+  }
+
+  // 2) global environment vars from Jenkins credentials
+  environment {
+    COOLIFY_TOKEN = credentials('3|unmr76kavCVt9zMwDsnag4WBVmUYop4pmsdoKXD4f03815a3')   // Jenkins “Secret text” ID
+    COOLIFY_APP_ID = credentials('qsg48koo8ccwwog8ck0cw8w8') // Jenkins “Secret text” ID
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        // public repo: no credentials block
+        checkout scm
+      }
     }
 
-    stages {
-        stage('Clone Repository') {
-            steps {
-                echo "Cloning repo..."
-                git 'https://github.com/AbdulWaseaDev/devtracker-full-stack.git'
-            }
-        }
+    stage('Build Frontend') {
+      when {
+        // only if something in devtracker-frontend/ changed
+        changeset "**/devtracker-frontend/**"
+      }
+      steps {
+        dir('devtracker-frontend') {
+          echo "Changes detected in frontend – building & deploying..."
+          
+          // install & build (customize as needed)
+          sh 'npm install'
+          sh 'npm run build'
 
-        stage('Install Frontend Dependencies') {
-            steps {
-                dir(FRONTEND_DIR) {
-                    sh 'npm install'
-                }
-            }
-        }
+          // trigger Coolify redeploy via CLI
+          sh """
+            npx coolify deploy \\
+              --token=${3|unmr76kavCVt9zMwDsnag4WBVmUYop4pmsdoKXD4f03815a3} \\
+              --app-id=${qsg48koo8ccwwog8ck0cw8w8}
+          """
 
-        stage('Build Frontend') {
-            steps {
-                dir(FRONTEND_DIR) {
-                    sh 'npm run build'
-                }
-            }
+          // --- OR, use Curl to hit Coolify REST API: ---
+          // sh """
+          //   curl -X POST \\
+          //     -H "Authorization: Bearer ${COOLIFY_TOKEN}" \\
+          //     -H "Content-Type: application/json" \\
+          //     "https://129.151.130.23/api/app/${COOLIFY_APP_ID}/deploy"
+          // """
         }
-
-        stage('Deploy Frontend') {
-            steps {
-                echo "Deploying frontend to $DEPLOY_DIR_FRONTEND"
-                sh "rm -rf $DEPLOY_DIR_FRONTEND/*"
-                sh "cp -r ${FRONTEND_DIR}/build/* $DEPLOY_DIR_FRONTEND/"
-            }
-        }
-
-        stage('Install Backend Dependencies') {
-            steps {
-                dir(BACKEND_DIR) {
-                    sh 'npm install'
-                }
-            }
-        }
-
-        stage('Deploy Backend') {
-            steps {
-                echo "Deploying backend to $DEPLOY_DIR_BACKEND"
-                sh "rm -rf $DEPLOY_DIR_BACKEND/*"
-                sh "cp -r ${BACKEND_DIR}/* $DEPLOY_DIR_BACKEND/"
-            }
-        }
-
-        stage('Start Backend Server') {
-            steps {
-                dir(DEPLOY_DIR_BACKEND) {
-                    sh 'pm2 restart app.js || pm2 start app.js' // or your entry file
-                }
-            }
-        }
+      }
     }
+
+    stage('Backend Placeholder') {
+      when {
+        changeset "**/devtracker-backend/**"
+      }
+      steps {
+        echo "Backend changes detected – this pipeline is configured elsewhere."
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "Pipeline completed."
+    }
+    failure {
+      mail to: 'berlin.techs.employees@gmail.com',
+           subject: "🚨 Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+           body: "Check console output: ${env.BUILD_URL}console"
+    }
+  }
 }
