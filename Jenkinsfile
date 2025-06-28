@@ -1,30 +1,34 @@
 pipeline {
   agent any
-  tools{
-    nodejs '24.3.0'
+
+  tools {
+    nodejs '24.3.0' // Make sure Node.js is configured in Jenkins Global Tool Configuration
   }
-  
-  triggers { githubPush() }
+
+  triggers {
+    githubPush() // Auto-trigger from GitHub webhook
+  }
 
   environment {
-    // these two IDs must match the “ID” fields of your Jenkins credentials
-    COOLIFY_TOKEN  = credentials('coolify-token')
-    COOLIFY_APP_ID = credentials('coolify-app-id')
+    COOLIFY_TOKEN  = credentials('coolify-token')     // Must be created in Jenkins Credentials
+    COOLIFY_APP_ID = credentials('coolify-app-id')    // Same here
   }
 
   stages {
+
     stage('Checkout') {
-      steps { checkout scm }
+      steps {
+        checkout scm
+      }
     }
 
-    stage('Build Frontend') {
-      when { changeset "**/devtracker-frontend/**" }
+    stage('Build Frontend & Redeploy') {
+      // Remove 'when' condition to always trigger build/deploy
       steps {
         dir('devtracker-frontend') {
           sh 'npm install'
           sh 'npm run build'
 
-          // now reference the env vars, not literal strings
           sh """
             npx coolify deploy \
               --token=\$COOLIFY_TOKEN \
@@ -34,14 +38,33 @@ pipeline {
       }
     }
 
-    // …
+    // Optional backend deployment block
+    // Uncomment if you want backend redeployment too
+    // stage('Build Backend & Redeploy') {
+    //   steps {
+    //     dir('devtracker-backend') {
+    //       sh 'npm install'
+    //       sh """
+    //         npx coolify deploy \
+    //           --token=\$COOLIFY_TOKEN \
+    //           --app-id=<YOUR_BACKEND_COOLIFY_APP_ID>
+    //       """
+    //     }
+    //   }
+    // }
+
   }
 
-//   post {
-//     failure {
-//       mail to: 'berlin.techs.employees@gmail.com',
-//            subject: "🚨 Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-//            body: "Check console output: ${env.BUILD_URL}console"
-//     }
-//   }
+  post {
+    success {
+      echo "✅ Build & Coolify deployment succeeded!"
+    }
+    failure {
+      echo "❌ Build or Coolify deployment failed!"
+      // Uncomment to send email on failure
+      // mail to: 'berlin.techs.employees@gmail.com',
+      //      subject: "🚨 Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+      //      body: "Check console output: ${env.BUILD_URL}console"
+    }
+  }
 }
