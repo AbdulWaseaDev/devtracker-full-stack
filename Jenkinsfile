@@ -1,5 +1,9 @@
 pipeline {
   agent any
+  tools{
+    nodejs '24.3.0'
+  }
+  
   triggers { githubPush() }
 
   environment {
@@ -33,11 +37,11 @@ pipeline {
     // …
   }
 
-  post {
-    failure {
-      mail to: 'berlin.techs.employees@gmail.com',
-           subject: "🚨 Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-           body: "Check console output: ${env.BUILD_URL}console"
-    }
-  }
+//   post {
+//     failure {
+//       mail to: 'berlin.techs.employees@gmail.com',
+//            subject: "🚨 Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+//            body: "Check console output: ${env.BUILD_URL}console"
+//     }
+//   }
 }
