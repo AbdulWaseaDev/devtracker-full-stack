@@ -16,7 +16,7 @@ const Home = () => {
                 style={{ height: "90vh", objectFit: "cover" }}
               />
               <Carousel.Caption className="bg-white bg-opacity-75 p-3 rounded text-dark">
-                <h3>Welcome to Dev-Tracker -Test Jenkins</h3>
+                <h3>Welcome to Dev-Tracker -Test Jenkins New Deploy</h3>
                 <p>
                   Dev-Tracker is a web-based application designed to help
                   developers and students monitor their daily learning progress,
