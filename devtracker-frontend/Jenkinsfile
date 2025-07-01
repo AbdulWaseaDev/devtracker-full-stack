@@ -1,0 +1,64 @@
+pipeline {
+  agent any
+
+  tools {
+    nodejs '24.3.0' // Ensure this version is set in Jenkins Global Tool Configuration
+  }
+
+  triggers {
+    githubPush() // Automatically trigger build on GitHub push
+  }
+
+  environment {
+    COOLIFY_FRONTEND_ID = credentials('coolify-app-id') // Add in Jenkins Credentials
+   // COOLIFY_BACKEND_ID  = credentials('coolify-backend-app-id')  // Add in Jenkins Credentials
+    COOLIFY_TOKEN       = credentials('coolify-token')           // Shared token for both
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Build Frontend & Redeploy') {
+      steps {
+        dir('devtracker-frontend') {
+          sh 'npm install'
+          sh 'npm run build'
+
+          sh """
+            npx coolify deploy \
+              --token=\$COOLIFY_TOKEN \
+              --app-id=\$COOLIFY_FRONTEND_ID
+          """
+        }
+      }
+    }
+
+    // stage('Build Backend & Redeploy') {
+    //   steps {
+    //     dir('devtracker-backend') {
+    //       sh 'npm install'
+
+    //       sh """
+    //         npx coolify deploy \
+    //           --token=\$COOLIFY_TOKEN \
+    //           --app-id=\$COOLIFY_BACKEND_ID
+    //       """
+    //     }
+    //   }
+    // }
+  }
+
+  post {
+    success {
+      echo "✅ All builds and deployments completed successfully!"
+    }
+    failure {
+      echo "❌ Build or deployment failed!"
+
+    }
+  }
+}
