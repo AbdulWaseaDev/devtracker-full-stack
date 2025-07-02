@@ -9,6 +9,7 @@ import {
 import Main from "./Components/Main.jsx";
 import Header from "./Components/Header.jsx";
 import Blog from "./Pages/Blog.jsx";
+import BlogPost from "./Pages/BlogPost.jsx";
 import Profile from "./Pages/Profile.jsx";
 import Track from "./Pages/Track.jsx";
 import Footer from "./Components/Footer.js";
@@ -35,6 +36,7 @@ const AppContent = () => {
         <Route path="/" element={<Main />} />
         <Route path="/home" element={<HomeMain />} />
         <Route path="/blog/:user?" element={<Blog />} />
+        <Route path="/blog/:user?/:slug?" element={<BlogPost />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/track" element={<Track />} />
         <Route path="/dashboard" element={<Dashboard />} />
