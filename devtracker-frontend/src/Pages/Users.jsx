@@ -10,7 +10,7 @@ const UserTable = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/v1/admin/allusers", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/admin/allusers`, {
       method: "GET",
       credentials: "include", // send the HTTP-only cookie
       headers: { "Content-Type": "application/json" },

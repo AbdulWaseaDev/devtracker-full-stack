@@ -8,7 +8,8 @@ const Blog = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const baseURL = "http://localhost:5000/api/v1/devto/feed";
+    const baseURL = `${process.env.REACT_APP_BACKEND_URL}/devto/feed`;
+    console.log(baseURL);
     const endpoint = alias ? `${baseURL}/${alias}` : baseURL;
 
     setLoading(true);

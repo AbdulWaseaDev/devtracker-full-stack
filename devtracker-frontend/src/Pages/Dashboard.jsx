@@ -8,7 +8,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/v1/me", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/me`, {
       method: "GET",
       credentials: "include",
     })

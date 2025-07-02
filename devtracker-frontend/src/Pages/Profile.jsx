@@ -5,7 +5,7 @@ function Profile() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/v1/users/portfolio", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/users/portfolio`, {
       method: "GET",
     })
       .then((res) => res.json())
