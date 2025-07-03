@@ -1,11 +1,11 @@
 // src/pages/Profile.jsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function Profile() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/v1/users/portfolio", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/users/portfolio`, {
       method: "GET",
     })
       .then((res) => res.json())
@@ -30,7 +30,15 @@ function Profile() {
     >
       {users.map((user) => (
         <div style={styles.card} key={user._id}>
-          <img src={user.avatar.url} alt="Avatar" style={styles.avatar} />
+          <img
+            src={
+              user.avatar?.url?.trim()
+                ? user.avatar.url
+                : "/images/default/default_avatar.jpg"
+            }
+            alt="Avatar"
+            style={styles.avatar}
+          />
           <h2 style={styles.name}>{user.name}</h2>
           <p style={styles.role}>{user.role}</p>
           <p style={styles.bio}>{user.bio}</p>

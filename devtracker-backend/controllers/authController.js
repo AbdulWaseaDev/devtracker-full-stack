@@ -37,8 +37,9 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
     github,
     linkedin,
   });
-
-  sendToken(user, 201, res);
+  res.status(201).json({
+    success: true,
+  });
 });
 
 /* post:login user => api/v1/login */
@@ -130,6 +131,20 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
   const users = await User.find({ role: { $ne: "admin" } })
     .select("-role")
+    .select("-createdAt")
+    .select("-updatedAt")
+    .select("-__v");
+
+  if (!users) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+  res.status(200).json({
+    users,
+  });
+});
+//admin all users
+export const getAllUsersAdmin = catchAsyncErrors(async (req, res, next) => {
+  const users = await User.find()
     .select("-createdAt")
     .select("-updatedAt")
     .select("-__v");

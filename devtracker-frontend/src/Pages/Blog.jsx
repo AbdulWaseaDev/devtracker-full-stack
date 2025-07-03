@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 const Blog = () => {
@@ -8,7 +8,7 @@ const Blog = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const baseURL = "http://localhost:5000/api/v1/devto/feed";
+    const baseURL = `${process.env.REACT_APP_BACKEND_URL}/devto/feed`;
     const endpoint = alias ? `${baseURL}/${alias}` : baseURL;
 
     setLoading(true);
@@ -103,7 +103,7 @@ const styles = {
     borderRadius: "10px",
     marginBottom: "12px",
   },
-  title: { fontSize: "22px", marginBottom: "8px" },
+  title: { fontSize: "22px", marginBottom: "8px", textDecoration: "none" },
   meta: { fontSize: "14px", color: "#6b7280", marginBottom: "12px" },
   content: { fontSize: "16px", color: "#374151" },
 };
