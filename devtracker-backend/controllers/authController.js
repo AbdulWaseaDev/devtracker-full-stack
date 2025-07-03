@@ -37,8 +37,9 @@ export const registerUser = catchAsyncErrors(async (req, res, next) => {
     github,
     linkedin,
   });
-
-  sendToken(user, 201, res);
+  res.status(201).json({
+    success: true,
+  });
 });
 
 /* post:login user => api/v1/login */
