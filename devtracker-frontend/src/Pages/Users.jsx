@@ -39,7 +39,6 @@ const UserTable = () => {
   const handleDelete = (id) =>
     setUsers((prev) => prev.filter((u) => u._id !== id));
   const handleEdit = (id) => alert(`Edit user with ID: ${id}`);
-  const handleUpdate = (id) => alert(`Update user with ID: ${id}`);
 
   const filteredUsers = users
     .filter((user) =>
@@ -149,12 +148,7 @@ const UserTable = () => {
                       >
                         Edit
                       </button>
-                      <button
-                        onClick={() => handleUpdate(user._id)}
-                        className="btn btn-info text-white btn-sm"
-                      >
-                        Update
-                      </button>
+
                       <button
                         onClick={() =>
                           window.confirm(
