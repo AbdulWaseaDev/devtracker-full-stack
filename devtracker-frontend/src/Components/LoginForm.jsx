@@ -23,12 +23,15 @@ const LoginForm = () => {
   const handleLogin = async (values, { resetForm, setSubmitting }) => {
     setLoginError(null);
     try {
-      const response = await fetch("http://localhost:5000/api/v1/login", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/login`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        },
+      );
 
       const data = await response.json();
       if (!response.ok) {
