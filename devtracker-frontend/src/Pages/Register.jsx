@@ -51,9 +51,13 @@ export default function FormExample() {
         setErrorMessage(""); // clear previous
 
         try {
-          await axios.post("http://localhost:5000/api/v1/register", values, {
-            withCredentials: true,
-          });
+          await axios.post(
+            `${process.env.REACT_APP_BACKEND_URL}/register`,
+            values,
+            {
+              withCredentials: true,
+            },
+          );
           setShowSuccess(true);
           resetForm();
           setTimeout(() => setShowSuccess(false), 5000);

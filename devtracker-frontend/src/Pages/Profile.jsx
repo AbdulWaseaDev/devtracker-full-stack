@@ -30,7 +30,7 @@ function Profile() {
     >
       {users.map((user) => (
         <div style={styles.card} key={user._id}>
-          <img src={user.avatar.url} alt="Avatar" style={styles.avatar} />
+          <img src={user?.avatar?.url} alt="Avatar" style={styles.avatar} />
           <h2 style={styles.name}>{user.name}</h2>
           <p style={styles.role}>{user.role}</p>
           <p style={styles.bio}>{user.bio}</p>
